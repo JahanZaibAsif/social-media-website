@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const User = require('../model/user');
 const data = require('../model/post');
+const Comment = require('../model/comment');
 const liked = require('../model/liked');
 const friendRequest = require('../model/friendRequest');
 const moment = require('moment');
@@ -40,6 +41,7 @@ router.get('/index',checkTokenExpiration, async(req, res) => {
     const Data = await Promise.all(postData.map(async post => {
       const user = await User.findById(post.userId);
       const like = await liked.countDocuments({postId:post._id});
+      const totalComment = await Comment.countDocuments({postId:post._id});
       return {
         name: user.first_name,
         text_post: post.text_post,
@@ -47,10 +49,12 @@ router.get('/index',checkTokenExpiration, async(req, res) => {
         createdAt:post.createdAt,
         _id :post._id,
         profile_picture_url: user ? user.profile_photo : null,
-        like
+        like,
+        totalComment
       };
     }));
 
+    // friend request
     const FriendRequest = await friendRequest.find({receiverId:login_user,status:0});
     const  friend_request = await Promise.all(FriendRequest.map(async value =>{
       const userCollection = await User.findById(value.senderId);
@@ -60,8 +64,29 @@ router.get('/index',checkTokenExpiration, async(req, res) => {
         name:userCollection.first_name,
       }
     })); 
+    // end friend request
+
+
+    // show the comment 
+    const allComment = await Comment.find();
+    const comment_post = await Promise.all(allComment.map(async value =>{
+      const postCollection = await data.findById({_id:value.postId});
+      const userCollection = await User.findById(value.userId);
+      return{
+        createdAt:value.createdAt,
+        comment:value.comment,
+        username:userCollection.first_name,
+        user_photo:userCollection.profile_photo,
+        id:value._id,
+        postId:value.postId
+      }
+    }));
+    // end show the comment
+
+
     res.render("index", 
     {
+      comment_post,
       friend_request,
       addFriend,
       moment,
@@ -107,6 +132,8 @@ router.post('/store_profile_photo', checkTokenExpiration, indexController.upload
     router.get('/friend_request/:id' ,checkTokenExpiration, postController.friend_request);
 
     router.post('/accept_request/:id' , postController.accept_request);
+
+    router.post('/:id/comment' ,  checkTokenExpiration, postController.comment);
 
 // =============================== End Text , Video , picture Post ======================================
 

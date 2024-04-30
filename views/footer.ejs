@@ -202,32 +202,7 @@
       </form>
     </div>
     <!-- side panel -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-      // Modify your existing jQuery code or add this to your script section
-$(document).ready(function() {
-  $('.likeButton').click(function() {
-    var button = $(this);
-    var postId = button.data('post-id');
 
-    // AJAX request
-    $.ajax({
-      type: 'POST',
-      url: '/like_post/' + postId,
-      success: function(response) {
-        var likeCountElement = button.find('#likeCount');
-        likeCountElement.text(response.likeCount);
-        var likeIconElement = $('#likeIcon');
-        likeIconElement.toggleClass('liked-red', response.isLiked);
-      },
-      error: function(error) {
-        console.log(error);
-      }
-    });
-  });
-});
-
-    </script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="js/main.min.js"></script>
     <script src="js/script.js"></script>

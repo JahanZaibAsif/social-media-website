@@ -30,7 +30,7 @@ app.use(
 const socialRoute = require('./routes/socialRoute');
 app.use('/',socialRoute);
 
-app.listen(4000, function(){
+app.listen(5000, function(){
     console.log('Server is running');
 });
 

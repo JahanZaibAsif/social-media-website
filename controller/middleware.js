@@ -4,7 +4,6 @@ const session = require('express-session');
 const app = express();
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET || 'default_secret_key';
-// Add this middleware to configure sessions
 app.use(
   session({
     secret: secretKey,

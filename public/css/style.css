@@ -4519,7 +4519,7 @@ canvas {
 
 /*--- load more ---*/
 
-.lodmore {
+/* .lodmore {
     display: inline-block;
     width: 100%;
 }
@@ -4558,7 +4558,7 @@ canvas {
 .btn-view.btn-load-more:hover::before {
     color: #fff;
     transform: translate(-50%, -50%) rotate(360deg);
-}
+} */
 
 
 /*--- responsive header ---*/

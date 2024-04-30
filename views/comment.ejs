@@ -1,0 +1,18 @@
+<ul  class="we-comet">
+  <% comment_post.forEach(comment =>{ %>
+   <% if(value._id == comment.postId)  {%>
+     <li>
+       <div class="comet-avatar">
+         <img src="<%= comment.user_photo %>" alt="">
+       </div>
+       <div class="we-comment">
+         <div class="coment-head">
+           <h5><a href="time-line.html" title=""><%= comment.username %></a></h5>
+           <span><%= moment(comment.createdAt).endOf('day').fromNow() %></span>
+           <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
+         </div>
+         <p><%= comment.comment %></p>
+       </div>
+       <% } %>
+       <%  }); %> 
+       <ul>       

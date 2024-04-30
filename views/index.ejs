@@ -1,4 +1,9 @@
 <%- include('header.ejs') %>
+<style>
+  .MessageContainer{
+    display: none;
+  }
+</style>
 <section>
   <div class="gap gray-bg">
     <div class="container-fluid">
@@ -92,6 +97,7 @@
                   </figure>
                   <div class="friend-meta">
                     <h4>
+                      
                       <a href="time-line.html" title=""><%= value.first_name %></a>
                     </h4>
                     <a href="/friend_request/<%=value._id %>" title="" class="underline">Add Friend</a>
@@ -139,7 +145,7 @@
             </div>
           </div>
           <!-- add post new box -->
-          <div class="loadMore">
+          <div>
             <% Data.forEach(value => { %>
             <div class="central-meta item">
               <div class="user-post">
@@ -151,12 +157,24 @@
                     <ins><a title="" href="time-line.html"><%= value.name%></a></ins>
                     <span>published: <%= moment(value.createdAt).format('MMMM Do YYYY, h:mm:ss a') %></span>
                   </div>
-
                   <div class="post-meta">
                     <img src="/image_post/<%= value.image_post %>" alt="" />
                     <div class="detail"><%= value.text_post %></div>
                     <div class="we-video-info">
                       <ul>
+                        <li>
+                          <span  class="comment" data-toggle="tooltip" title="Comments">
+                            <i class="fa fa-comments-o" onclick="showMessage($postInformation)"></i>
+                            <ins><%= value.totalComment  %></ins>
+                          </span>
+                        </li>
+                        <li>
+                          <span class="comment" data-toggle="Delete" title="Comments">
+                            <a href="/post_delete/<%= value._id %>">
+                              <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                          </span>
+                        </li>
                         <li>
                           <form id="likeForm" action="/like_post/<%= value._id %>">
                             <button class="bg-light likeButton" id="likebutton" data-post-id="<%= value._id %>" type="button">
@@ -167,71 +185,81 @@
                             </button>
                         </li>
                         </form>
-                        <li>
-                          <span class="comment" data-toggle="tooltip" title="Comments">
-                            <i class="fa fa-comments-o"></i>
-                            <ins>52</ins>
-                          </span>
-                        </li>
-
-
                         <li class="social-media">
                           <div class="menu">
-                            <div class="btn trigger">
-                              <i class="fa fa-share-alt"></i>
+                            <div class="btn trigger"><i class="fa fa-share-alt"></i></div>
+                            <div class="rotater">
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-html5"></i></a></div>
                             </div>
                             <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-html5"></i></a>
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-facebook"></i></a></div>
+                            </div>
+                            <div class="rotater">
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-google-plus"></i></a></div>
+                            </div>
+                            <div class="rotater">
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-twitter"></i></a></div>
+                            </div>
+                            <div class="rotater">
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-css3"></i></a></div>
+                            </div>
+                            <div class="rotater">
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-instagram"></i></a>
                               </div>
                             </div>
                             <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-facebook"></i></a>
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-dribbble"></i></a>
                               </div>
                             </div>
                             <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-google-plus"></i></a>
+                              <div class="btn btn-icon"><a href="#" title=""><i class="fa fa-pinterest"></i></a>
                               </div>
                             </div>
-                            <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-twitter"></i></a>
-                              </div>
-                            </div>
-                            <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-css3"></i></a>
-                              </div>
-                            </div>
-                            <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-instagram"></i></a>
-                              </div>
-                            </div>
-                            <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-dribbble"></i></a>
-                              </div>
-                            </div>
-                            <div class="rotater">
-                              <div class="btn btn-icon">
-                                <a href="#" title=""><i class="fa fa-pinterest"></i></a>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <span data-toggle="tooltip" title="Delete Post">
-                            <a href="/post_delete/<%= value._id %>"><i class="fa fa-trash"></i></a>
 
-                            <ins></ins>
-                          </span>
+                          </div>
                         </li>
                       </ul>
                     </div>
                   </div>
+                </div>
+                <div class="coment-area">
+                  <ul >
+                    <li class="post-comment mt-5">
+                      <div class="comet-avatar">
+                        <img src="<%= Profile.profile_photo %>" alt="">
+                      </div>
+                      <div class="post-comt-box">
+                        <form action="/<%= value._id %>/comment" method="Post">
+                          <textarea name="comment" rows="4" cols="10" placeholder="Post your comment"></textarea>
+                          <button class="commentButton btn text-dark  btn-primary" type="button" data-post-id="<%= value._id %>">
+                            Comment
+                          </button>
+                        </form>
+                      </div>
+                    </li>
+                  </ul>
+                  <ul id="commentsContainer_<%= value._id %>" class="MessageContainer we-comet">
+                    <%  comment_post.forEach(comment => { %>
+                    <% if (value._id == comment.postId) {%>
+                    <li>
+                      <div class="comet-avatar">
+                        <img src="<%= comment.user_photo  %>" alt="">
+                      </div>
+                      <div class="we-comment">
+                        <div class="coment-head">
+                          <h5><a href="time-line.html" title="">
+                              <p><%= comment.username %></p>
+                            </a></h5>
+                          <span><%= moment(comment.createdAt).utcOffset('+05:00').fromNow()  %></span>
+                          <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
+                        </div>
+                        <p><%= comment.comment %></p>
+                      </div>
+                    </li>
+                    <% } %>
+                    <% }); %>
+                    <ul>
+                  
                 </div>
               </div>
             </div>
@@ -345,16 +373,14 @@
                 <% friend_request.forEach(value => { %>
                 <li>
                   <figure>
-                    <img class="mb-5" src="/profile_photo/<%= value.profile_photo %>" alt="" />
+                    <img class="mb-4" src="<%= value.profile_photo %>" alt="">
                   </figure>
                   <div class="friendz-meta">
                     <a href="time-line.html"><%= value.name %></a>
-                    <form action="/accept_request/<%= value._id %>" method="post">
-                      <button type="submit" class="btn btn-primary mt-1">Accept</button>
-                    </form>
+                   <a href="/accept_request/<%= value._id %>" class="btn btn-primary" >Accept</a>
                   </div>
                 </li>
-                <% }) %>
+                <% }); %>
               </ul>
               <form class="text-box">
                 <textarea placeholder="Post enter to post..."></textarea>
@@ -388,4 +414,74 @@
   </div>
   </div>
 </section>
-<% include('footer.ejs') %>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+  
+  $(document).ready(function() {
+    function showMessage(postId) {
+    $('#commentsContainer_' + postId).toggle();
+  }
+    $('.likeButton').click(function() {
+      var button = $(this);
+      var postId = button.data('post-id');
+      console.log("this is post id  when user create the comment" + postId);
+      // AJAX request
+      $.ajax({
+        type: 'POST',
+        url: '/like_post/' + postId,
+        success: function(response) {
+          var likeCountElement = button.find('#likeCount');
+          likeCountElement.text(response.likeCount);
+          var likeIconElement = $('#likeIcon');
+          likeIconElement.toggleClass('liked-red', response.isLiked);
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
+    });
+
+
+    $('.commentButton').click(function(e) {
+      e.preventDefault();
+      const commentForm = $(this).closest('form');
+      const formData = commentForm.serialize();
+      var button = $(this);
+      const postId = button.data('post-id');
+      console.log("this is when create the comment " + postId)
+      $.ajax({
+        type: 'POST',
+        url: `/${postId}/comment`,
+        data: formData,
+        success: function(response) {
+          commentForm[0].reset();
+          console.log(response.allComment.comment);
+          const comment = response.allComment.comment;
+
+          const createdAt = response.allComment.createdAt;
+          const username = response.userInformation.first_name;
+          const userPhoto = response.userInformation.profile_photo;
+          const postInformation = response.postInformation._id;
+          const commentDiv = `<li>
+                              <div class="comet-avatar">
+                                <img src="${userPhoto}" alt="">
+                              </div>
+                              <div class="we-comment">
+                                <div class="coment-head">
+                                  <h5><a href="time-line.html" title=""><p>${ username }</p></a></h5>
+                                  <span>${ moment(createdAt).utcOffset('+05:00').fromNow() }</span>
+                                  <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
+                                </div>
+                                <p>${ comment }</p>
+                              </div>
+                          </li>`
+          $('#commentsContainer_' + postInformation).append(commentDiv);
+          showMessage(postInformation);
+        }
+      });
+    });
+
+  });
+</script>
+<%- include('footer.ejs') %>

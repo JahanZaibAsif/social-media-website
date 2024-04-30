@@ -1,6 +1,8 @@
 const data = require('../model/post');
 const liked = require('../model/liked');
+const User = require('../model/user');
 const friendRequest = require('../model/friendRequest');
+const Comment = require('../model/comment');
 const express = require('express');
 const session = require('express-session');
 const { findOne, deleteOne } = require('../model/user');
@@ -81,7 +83,6 @@ const post_delete = async (req, res) => {
 const create_like = async (req, res) => {
   const postId = req.params.id;
   const userId = req.user.id;
-
   try {
     const like_post = await liked.findOne({ postId, userId });
 
@@ -91,10 +92,7 @@ const create_like = async (req, res) => {
       const newLike = new liked({ postId, userId });
       await newLike.save();
     }
-
-    // Fetch updated like count
     const updatedLikeCount = await liked.countDocuments({ postId });
-
     res.json({ success: true, likeCount: updatedLikeCount });
   } catch (error) {
     console.error('Error in create_like_ajax:', error);
@@ -107,7 +105,6 @@ const create_like = async (req, res) => {
 
 // friend request
 
-
 const friend_request = async(req , res) => {
   senderId = req.user.id;
   receiverId = req.params.id;
@@ -115,14 +112,26 @@ const friend_request = async(req , res) => {
   await FriendRequest.save();
   res.redirect('/index');
 }
-
 const accept_request = async(req , res) => {
   const status = 1;
    await friendRequest.findByIdAndUpdate(req.params.id,{$set:{status:status}});
    res.redirect('/index');
 }
 
+// Comment on Post
 
+const comment = async(req ,res) =>{
+  const userId = req.user.id;
+  const postId = req.params.id;
+  const {comment} = req.body;
+  const commentSave = new Comment({userId,postId,comment});
+  await commentSave.save();
+  const login_user = await User.find({_id:userId});
+  const allComment = await Comment.findOne().sort({_id:-1});
+  const userInformation = await User.findOne({_id:allComment.userId});
+  const postInformation = await data.findOne({_id:allComment.postId});
+  res.json({success:true,allComment,userInformation,postInformation });
+}
 
 
 // ===================================== End Text Post =====================================
@@ -134,4 +143,5 @@ module.exports= {
     create_like,
     friend_request,
     accept_request,
+    comment
 }

@@ -17,8 +17,6 @@ cloudinary.config({
 // ============================== Login and Register ======================================
 const store_register = async (req, res) => {
   const { first_name, userName, password, gender, email, termCondecation } = req.body;
-  console.log(first_name, email, password);
-
   const generateUniqueToken = (length = 20) => {
     return crypto.randomBytes(length).toString('hex');
   };
@@ -33,7 +31,6 @@ const store_register = async (req, res) => {
 const verify = async (req , res)  => {
 try {
   const update = await user.updateOne({_id:req.query.id},{$set:{is_verified:1}});
-  console.log(update);
   res.render("emailVerified");
 } catch (error) {
   console.log(error.message);
@@ -58,6 +55,8 @@ const store_login = async (req, res) => {
 };
 
 const logout = async(req, res, next) => {
+ 
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   if (req.session) {
     req.session.destroy(function (err) {
       if (err) {
